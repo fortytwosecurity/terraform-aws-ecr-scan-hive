@@ -90,7 +90,7 @@ def lambda_handler(event, context):
     # send finding to Security Hub
     severity = ""
     severityHive = 1
- 
+
     if numLow:
         severity = "LOW"
         severityHive = 1
