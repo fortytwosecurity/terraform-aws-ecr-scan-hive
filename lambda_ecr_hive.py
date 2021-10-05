@@ -90,27 +90,18 @@ def lambda_handler(event, context):
     # send finding to Security Hub
     severity = ""
     severityHive = 1
-    title = "ECR Finding"
-    ECRComplianceRating = 'PASSED'
+ 
     if numLow:
         severity = "LOW"
-        title = "Low ECR Vulnerability"
-        ECRComplianceRating = 'PASSED'
         severityHive = 1
     if numMedium:
         severity = "MEDIUM"
-        title = "Medium ECR Vulnerability"
-        ECRComplianceRating = 'FAILED'
         severityHive = 2
     if numHigh:
         severity = "HIGH"
-        title = "High ECR Vulnerability"
-        ECRComplianceRating = 'FAILED'
         severityHive = 3
     if numCritical:
         severity = "CRITICAL"
-        title = "Critical ECR Vulnerability"
-        ECRComplianceRating = 'FAILED'
         severityHive = 3
 
     if createHiveAlert:
