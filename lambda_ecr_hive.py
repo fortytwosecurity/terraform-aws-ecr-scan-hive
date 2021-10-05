@@ -24,8 +24,8 @@ def hive_rest_call(data, url, apikey):
     return json.loads(resp.decode('utf-8'))
 
 
-def hive_build_data(accountId, repoName, region, severity, \
-    severityHive, reference):
+def hive_build_data(accountId, repoName, region, severity,
+                    severityHive, reference):
 
     description = "A vulnerability has been found in the repo " \
         + repoName + " with rating " + severity + " in account " \
@@ -65,7 +65,7 @@ def lambda_handler(event, context):
     # import Lambda ENV details from context
     accountId = context.invoked_function_arn.split(":")[4]
     awsRegion = context.invoked_function_arn.split(":")[3]
-    #createHiveAlert = os.environ['createHiveAlert']
+    # createHiveAlert = os.environ['createHiveAlert']
     createHiveAlert = True
 
     print("ECR alert: ", event )
