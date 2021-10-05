@@ -94,6 +94,22 @@ data "archive_file" "ecr_to_hive_lambda_zip" {
   output_path = "lambda_ecr_hive.zip"
 }
 
+module "thehive4py_layer" {
+  source  = "terraform-aws-modules/lambda/aws"
+  version = "2.7.0"
+
+  create_layer = true
+
+  layer_name          = "thehive4py-layer-local"
+  description         = "Lambda layer containing thehive4py"
+  compatible_runtimes = ["python3.8"]
+
+  create_package         = false
+  local_existing_package = "layer.zip"
+
+  ignore_source_code_hash = true
+}
+
 module "ecr_to_hive_lambda" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "2.7.0"
@@ -110,6 +126,10 @@ module "ecr_to_hive_lambda" {
     hiveSecretArn = module.hive_api_key.arn
   }
 
+  layers = [
+    module.thehive4py_layer.lambda_layer_arn,
+  ]
+  
   attach_policies    = true
   policies           = [module.hive_ecr_iam_policy.arn]
   number_of_policies = 1
