@@ -24,9 +24,15 @@ def hive_rest_call(data, url, apikey):
     return json.loads(resp.decode('utf-8'))
 
 
-def hive_build_data(accountId, repoName, region, severity, severityHive, reference):
-    description = "A vulnerability has been found in the repo " + repoName + " with rating " + severity + " in account " + accountId + " in region " + region + ". Please remediate the issue."
-    title = severity + " ECR Finding " + repoName 
+def hive_build_data(accountId, repoName, region, severity, \
+    severityHive, reference):
+
+    description = "A vulnerability has been found in the repo " \
+        + repoName + " with rating " + severity + " in account " \
+        + accountId + " in region " + region \
+        + ". Please remediate the issue."
+
+    title = severity + " ECR Finding " + repoName
     source = repoName + ":" + region + ":" + accountId + "2"
     alert = {
         "title": title,
@@ -34,7 +40,7 @@ def hive_build_data(accountId, repoName, region, severity, severityHive, referen
         "type": "external",
         "source": source,
         "sourceRef": reference
-    }    
+    }
     print("Hive alert: ", json.dumps(alert))
 
     return json.dumps(alert)
