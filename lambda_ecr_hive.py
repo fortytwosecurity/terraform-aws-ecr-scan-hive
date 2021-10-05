@@ -1,30 +1,28 @@
 import json
 import boto3
-import datetime
-import uuid
 import os
-import base64
 import urllib.request
 import urllib
 
- 
+
 def hive_rest_call(data, url, apikey):
 
-  hiveurl = url + "/api/alert"
+    hiveurl = url + "/api/alert"
 
-  # Build the request
-  restreq = urllib.request.Request(hiveurl)
-  restreq.add_header('Content-Type', 'application/json')
-  restreq.add_header('Authorization', 'Bearer %s' % apikey)
+    # Build the request
+    restreq = urllib.request.Request(hiveurl)
+    restreq.add_header('Content-Type', 'application/json')
+    restreq.add_header('Authorization', 'Bearer %s' % apikey)
 
-  # Send the request and grab JSON response
-  response = urllib.request.urlopen(restreq, data.encode('utf-8'))
+    # Send the request and grab JSON response
+    response = urllib.request.urlopen(restreq, data.encode('utf-8'))
 
-  resp = response.read()
-  print("Hive response: ", json.dumps(resp.decode('utf-8')))
+    resp = response.read()
+    print("Hive response: ", json.dumps(resp.decode('utf-8')))
 
-  # Load into a JSON object and return that to the calling function
-  return json.loads(resp.decode('utf-8'))
+    # Load into a JSON object and return that to the calling function
+    return json.loads(resp.decode('utf-8'))
+
 
 def hive_build_data(accountId, repoName, region, severity, severityHive, reference):
     description = "A vulnerability has been found in the repo " + repoName + " with rating " + severity + " in account " + accountId + " in region " + region + ". Please remediate the issue."
@@ -41,6 +39,7 @@ def hive_build_data(accountId, repoName, region, severity, severityHive, referen
 
     return json.dumps(alert)
 
+
 def get_hive_secret(boto3, secretarn):
     service_client = boto3.client('secretsmanager')
     secret = service_client.get_secret_value(SecretId=secretarn)
@@ -54,6 +53,7 @@ def get_hive_secret(boto3, secretarn):
             raise KeyError("%s key is missing from secret JSON" % field)
 
     return secret_dict
+
 
 def lambda_handler(event, context):
     # import Lambda ENV details from context
