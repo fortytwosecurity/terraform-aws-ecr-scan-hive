@@ -24,8 +24,6 @@ markdown validate:
   script:
     - gem install mdl -v 0.11.0
     - mdl $CI_PROJECT_DIR/README.md
-  tags:
-    - rocket-docker1
 
 terraform validate:
   stage: validate
@@ -37,8 +35,6 @@ terraform validate:
   script:
     - terraform -version
     - terraform fmt -check -recursive
-  tags:
-    - rocket-docker1
 
 gitleaks validate:
   stage: validate
@@ -47,8 +43,6 @@ gitleaks validate:
     entrypoint: [""]
   script: 
     - gitleaks --path=$CI_PROJECT_DIR/
-  tags:
-    - rocket-docker1
 
 python validate:
   stage: validate
@@ -57,5 +51,3 @@ python validate:
     entrypoint: [""]
   script:
     -  flake8 $CI_PROJECT_DIR
-  tags:
-    - rocket-docker1
