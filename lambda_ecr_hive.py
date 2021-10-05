@@ -68,7 +68,7 @@ def lambda_handler(event, context):
     # createHiveAlert = os.environ['createHiveAlert']
     createHiveAlert = True
 
-    print("ECR alert: ", event )
+    print("ECR alert: ", event)
 
     # Get ECR event details
     eventDetails = event['detail']
@@ -78,6 +78,7 @@ def lambda_handler(event, context):
     numCritical = 0
     numMedium = 0
     numHigh = 0
+    numLow = 0
     if findingsevcounts.get('CRITICAL'):
         numCritical = findingsevcounts['CRITICAL']
     if findingsevcounts.get('MEDIUM'):
@@ -114,12 +115,10 @@ def lambda_handler(event, context):
 
     if createHiveAlert:
         hiveSecretArn = os.environ['hiveSecretArn']
-        hiveSecretData = get_hive_secret(boto3,hiveSecretArn)
+        hiveSecretData = get_hive_secret(boto3, hiveSecretArn)
         hiveUrl = hiveSecretData['url']
         hiveApiKey = hiveSecretData['apikey']
-        json_data = hive_build_data(accountId, repoName, awsRegion, severity, severityHive, reference)
+        json_data = hive_build_data(accountId, repoName, awsRegion, severity,
+                                    severityHive, reference)
         json_response = hive_rest_call(json_data, hiveUrl, hiveApiKey)
-        print("Created Hive alert ", json_response )
-
-
-    
+        print("Created Hive alert ", json_response)
