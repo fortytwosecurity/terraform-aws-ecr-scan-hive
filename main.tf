@@ -107,7 +107,7 @@ module "thehive4py_layer" {
   create_package         = false
   local_existing_package = "layer.zip"
 
-  ignore_source_code_hash = true
+  #ignore_source_code_hash = true
 }
 
 module "ecr_to_hive_lambda" {
