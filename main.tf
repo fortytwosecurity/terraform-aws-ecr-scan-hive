@@ -97,7 +97,7 @@ resource "aws_lambda_permission" "hive_ecr_allow_cloudwatch" {
 
 data "archive_file" "ecr_to_hive_lambda_zip" {
   type        = "zip"
-  source_file = "lambda_ecr_hive.py"
+  source_dir  = "lambda/"
   output_path = "lambda_ecr_hive.zip"
 }
 

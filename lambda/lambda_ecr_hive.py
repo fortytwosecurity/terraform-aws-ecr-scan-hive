@@ -3,7 +3,8 @@ import boto3
 import os
 import urllib.request
 import urllib
-
+from thehive4py.api import TheHiveApi
+from thehive4py.models import Alert, AlertArtifact
 
 def hive_rest_call(data, url, apikey):
 
