@@ -1,7 +1,6 @@
 import json
 import boto3
 import os
-import urllib.request
 from thehive4py.api import TheHiveApi
 from thehive4py.models import Alert
 
@@ -14,33 +13,34 @@ def hive_rest_call(alert, url, apikey):
     try:
         response = api.create_alert(alert)
 
-        # Print the JSON response 
+        # Print the JSON response
         print(json.dumps(response.json(), indent=4, sort_keys=True))
 
     except AlertException as e:
         print("Alert create error: {}".format(e))
 
-
     # Load into a JSON object and return that to the calling function
     return json.loads(response.decode('utf-8'))
 
 def hive_build_data(accountId, repoName, region, severity,
-                    severityHive, reference, tag_environment, 
-                    tag_project, tag_company, imageDigest,imageTags):
+                    severityHive, reference, tag_environment,
+                    tag_project, tag_company, imageDigest, imageTags):
 
     description = "A vulnerability has been found in the repo " \
-        + repoName + "(tag: " + imageTags + ") with rating " + severity + " in account " \
-        + accountId + " in region " + region \
+        + repoName + "(tag: " + imageTags + ") with rating " + severity \
+        + " in account " + accountId + " in region " + region \
         + ". Please remediate the issue. [Scan Results](https://" + region \
         + ".console.aws.amazon.com/ecr/repositories/private/" + accountId \
-        + "/" + repoName + "/image/" + imageDigest + "/scan-results/?region=" + region + ")"
+        + "/" + repoName + "/image/" + imageDigest + "/scan-results/?region=" \
+        + region + ")"
 
     title = severity + " ECR Finding " + repoName
     source = repoName + ":" + region + ":" + accountId
 
     alert = Alert(title=title,
         tlp=3,
-        tags=[repoName, accountId, region, severity, tag_environment, tag_project, tag_company],
+        tags=[repoName, accountId, region, severity, tag_environment, tag_project, \
+            tag_company],
         description=description,
         type='external',
         source=source,
@@ -50,6 +50,7 @@ def hive_build_data(accountId, repoName, region, severity,
     print("Hive alert: ", alert)
 
     return alert
+
 
 def get_hive_secret(boto3, secretarn):
     service_client = boto3.client('secretsmanager')
