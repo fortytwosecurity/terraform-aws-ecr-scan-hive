@@ -31,7 +31,9 @@ def hive_build_data(accountId, repoName, region, severity,
     description = "A vulnerability has been found in the repo " \
         + repoName + "(tag: " + imageTags + ") with rating " + severity + " in account " \
         + accountId + " in region " + region \
-        + ". Please remediate the issue. [Scan Results](https://" + region + ".console.aws.amazon.com/ecr/repositories/private/" + accountId + "/" + repoName + "/image/" + imageDigest + "/scan-results/?region=" + region + ")"
+        + ". Please remediate the issue. [Scan Results](https://" + region \
+        + ".console.aws.amazon.com/ecr/repositories/private/" + accountId \
+        + "/" + repoName + "/image/" + imageDigest + "/scan-results/?region=" + region + ")"
 
     title = severity + " ECR Finding " + repoName
     source = repoName + ":" + region + ":" + accountId
