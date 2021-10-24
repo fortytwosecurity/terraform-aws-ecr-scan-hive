@@ -1,6 +1,7 @@
 # Terraform Aws Ecr Scan Hive
 
-secret value: 
+secret value:
+
 ```
 {
   "url": "https://hive.domain.com",
