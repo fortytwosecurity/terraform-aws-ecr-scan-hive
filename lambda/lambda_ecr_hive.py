@@ -16,7 +16,7 @@ def hive_rest_call(alert, url, apikey):
         # Print the JSON response
         print(json.dumps(response.json(), indent=4, sort_keys=True))
 
-    except AlertException as e:
+    except AlertException as e: # noqa: F821
         print("Alert create error: {}".format(e))
 
     # Load into a JSON object and return that to the calling function
@@ -40,13 +40,13 @@ def hive_build_data(accountId, repoName, region, severity,
 
     alert = Alert(title=title,
                   tlp=3,
-                  tags=[repoName, accountId, region, severity, tag_environment, \
-                         tag_project, tag_company],
+                  tags=[repoName, accountId, region, severity,
+                        tag_environment, tag_project, tag_company], # noqa: E127
                   description=description,
                   type='external',
                   source=source,
                   sourceRef=reference,
-    )
+                 )
 
     print("Hive alert: ", alert)
 
@@ -123,7 +123,7 @@ def lambda_handler(event, context):
         hiveApiKey = hiveSecretData['apikey']
         json_data = hive_build_data(accountId, repoName, awsRegion, severity,
                                     severityHive, reference, tag_environment,
-                                    tag_project, tag_company, imageDigest, 
+                                    tag_project, tag_company, imageDigest,
                                     imageTags)
         json_response = hive_rest_call(json_data, hiveUrl, hiveApiKey)
         print("Created Hive alert ", json_response)
