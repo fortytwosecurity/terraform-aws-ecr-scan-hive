@@ -1,14 +1,18 @@
 
 
+resource "random_string" "hive_api_key" {
+  length = 4
+}
+
 module "hive_api_key" {
   source  = "QuiNovas/standard-secret/aws"
   version = "3.0.2"
-  name    = "test/hive/api-key"
+  name    = "test/hive/api-key-${random_string.hive_api_key.id}"
 }
 
 module "hive_ecr_cloudwatch_event" {
   source = "git::https://github.com/cloudposse/terraform-aws-cloudwatch-events.git?ref=master"
-  name   = "hive_ecr_cloudwatch"
+  name   = "hive_ecr_cloudwatch-${random_string.server.id}"
 
   cloudwatch_event_rule_description = var.cloudwatch_event_rule_description
   cloudwatch_event_rule_pattern     = var.cloudwatch_event_rule_pattern
@@ -25,7 +29,7 @@ module "hive_ecr_iam_assumable_role" {
 
   create_role = true
 
-  role_name         = "ECRToHiveFindingsLambdaRole"
+  role_name         = "ECRToHiveFindingsLambdaRole-${random_string.server.id}"
   role_requires_mfa = false
 
   custom_role_policy_arns = [
@@ -37,7 +41,7 @@ module "hive_ecr_iam_policy" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
   version = "~> 3.0"
 
-  name        = "ECRToHiveFindingsLambda-Policy"
+  name        = "ECRToHiveFindingsLambda-Policy-${random_string.server.id}"
   path        = "/"
   description = "ECRToHiveFindingsLambda-Policy"
 
@@ -81,7 +85,7 @@ EOF
 }
 
 resource "aws_lambda_permission" "hive_ecr_allow_cloudwatch" {
-  statement_id  = "PermissionForEventsToInvokeLambdachk"
+  statement_id  = "PermissionForEventsToInvokeLambdachk-${random_string.server.id}"
   action        = "lambda:InvokeFunction"
   function_name = module.ecr_to_hive_lambda.lambda_function_name
   principal     = "events.amazonaws.com"
@@ -105,7 +109,7 @@ module "thehive4py_layer" {
   compatible_runtimes = ["python3.8"]
 
   create_package         = false
-  local_existing_package = "layer.zip"
+  local_existing_package = "${path.module}/layer.zip"
 
   #ignore_source_code_hash = true
 }
