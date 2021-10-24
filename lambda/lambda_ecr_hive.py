@@ -25,10 +25,10 @@ def hive_rest_call(alert, url, apikey):
 
 def hive_build_data(accountId, repoName, region, severity,
                     severityHive, reference, tag_environment,
-                    tag_project, tag_company, imageDigest, imageTags):
+                    tag_project, tag_company, imageDigest, imageTag):
 
     description = "A vulnerability has been found in the repo " \
-        + repoName + "(tag: " + imageTags + ") with rating " + severity \
+        + repoName + "(tag: " + imageTag + ") with rating " + severity \
         + " in account " + accountId + " in region " + region \
         + ". Please remediate the issue. [Scan Results](https://" + region \
         + ".console.aws.amazon.com/ecr/repositories/private/" + accountId \
@@ -82,7 +82,7 @@ def lambda_handler(event, context):
     reference = event['id']
     repoName = eventDetails['repository-name']
     imageDigest = eventDetails['image-digest']
-    imageTags = eventDetails['image-tags']
+    imageTag = eventDetails['image-tags'][0]
     findingsevcounts = eventDetails['finding-severity-counts']
     numCritical = 0
     numMedium = 0
@@ -124,6 +124,6 @@ def lambda_handler(event, context):
         json_data = hive_build_data(accountId, repoName, awsRegion, severity,
                                     severityHive, reference, tag_environment,
                                     tag_project, tag_company, imageDigest,
-                                    imageTags)
+                                    imageTag)
         json_response = hive_rest_call(json_data, hiveUrl, hiveApiKey)
         print("Created Hive alert ", json_response)
