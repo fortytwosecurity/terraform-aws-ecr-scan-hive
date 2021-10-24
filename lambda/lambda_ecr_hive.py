@@ -14,13 +14,13 @@ def hive_rest_call(alert, url, apikey):
         response = api.create_alert(alert)
 
         # Print the JSON response
-        print(json.dumps(response.json(), indent=4, sort_keys=True))
+        # print(json.dumps(response.json(), indent=4, sort_keys=True))
 
     except AlertException as e:  # noqa: F821
         print("Alert create error: {}".format(e))
 
     # Load into a JSON object and return that to the calling function
-    return json.dumps(response.json(), indent=4, sort_keys=True)
+    return json.dumps(response.json())
 
 
 def hive_build_data(accountId, repoName, region, severity,
