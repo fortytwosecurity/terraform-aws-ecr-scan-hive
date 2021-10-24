@@ -79,6 +79,8 @@ def lambda_handler(event, context):
     eventDetails = event['detail']
     reference = event['id']
     repoName = eventDetails['repository-name']
+    imageDigest = eventDetails['image-digest']
+    imageTags = eventDetails['image-tags']
     findingsevcounts = eventDetails['finding-severity-counts']
     numCritical = 0
     numMedium = 0
@@ -118,6 +120,7 @@ def lambda_handler(event, context):
         hiveUrl = hiveSecretData['url']
         hiveApiKey = hiveSecretData['apikey']
         json_data = hive_build_data(accountId, repoName, awsRegion, severity,
-                                    severityHive, reference, tag_environment, tag_project, tag_company)
+                                    severityHive, reference, tag_environment, 
+                                    tag_project, tag_company,imageDigest,imageTags)
         json_response = hive_rest_call(json_data, hiveUrl, hiveApiKey)
         print("Created Hive alert ", json_response)
