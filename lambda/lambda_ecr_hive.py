@@ -20,7 +20,7 @@ def hive_rest_call(alert, url, apikey):
         print("Alert create error: {}".format(e))
 
     # Load into a JSON object and return that to the calling function
-    return json.loads(response.decode('utf-8'))
+    return json.dumps(response.json(), indent=4, sort_keys=True)
 
 
 def hive_build_data(accountId, repoName, region, severity,
