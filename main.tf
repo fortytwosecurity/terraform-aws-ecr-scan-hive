@@ -29,7 +29,7 @@ module "hive_ecr_iam_assumable_role" {
 
   create_role = true
 
-  role_name         = "ECRToHiveFindingsLambdaRole-${random_string.server.id}"
+  role_name         = "ECRToHiveFindingsLambdaRole-${random_string.hive_api_key.id}"
   role_requires_mfa = false
 
   custom_role_policy_arns = [
@@ -41,7 +41,7 @@ module "hive_ecr_iam_policy" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
   version = "~> 3.0"
 
-  name        = "ECRToHiveFindingsLambda-Policy-${random_string.server.id}"
+  name        = "ECRToHiveFindingsLambda-Policy-${random_string.hive_api_key.id}"
   path        = "/"
   description = "ECRToHiveFindingsLambda-Policy"
 
@@ -85,7 +85,7 @@ EOF
 }
 
 resource "aws_lambda_permission" "hive_ecr_allow_cloudwatch" {
-  statement_id  = "PermissionForEventsToInvokeLambdachk-${random_string.server.id}"
+  statement_id  = "PermissionForEventsToInvokeLambdachk-${random_string.hive_api_key.id}"
   action        = "lambda:InvokeFunction"
   function_name = module.ecr_to_hive_lambda.lambda_function_name
   principal     = "events.amazonaws.com"
