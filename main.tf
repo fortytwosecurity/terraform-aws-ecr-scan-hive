@@ -131,6 +131,9 @@ module "ecr_to_hive_lambda" {
 
   environment_variables = {
     hiveSecretArn = module.hive_api_key.arn
+    environment   = var.environment
+    company       = var.company
+    project       = var.project
   }
 
   layers = [

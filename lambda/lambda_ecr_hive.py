@@ -6,9 +6,7 @@ import urllib
 from thehive4py.api import TheHiveApi
 from thehive4py.models import Alert, AlertArtifact, CustomFieldHelper
 
-
-
-def hive_rest_call(data, url, apikey):
+def hive_rest_call(alert, url, apikey):
 
     api = TheHiveApi(hiveurl, apikey)
     
@@ -38,9 +36,8 @@ def hive_build_data(accountId, repoName, region, severity,
     title = severity + " ECR Finding " + repoName
     source = repoName + ":" + region + ":" + accountId
 
-    alert = Alert(title='New Alert',
+    alert = Alert(title=title,
         tlp=3,
-        title=title,
         tags=[repoName, accountId, region, severity],
         description=description,
         type='external',
@@ -51,7 +48,7 @@ def hive_build_data(accountId, repoName, region, severity,
 
     print("Hive alert: ", json.dumps(alert))
 
-    return json.dumps(alert)
+    return alert
 
 
 def get_hive_secret(boto3, secretarn):
