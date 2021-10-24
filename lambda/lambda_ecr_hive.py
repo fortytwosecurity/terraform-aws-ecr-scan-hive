@@ -2,7 +2,6 @@ import json
 import boto3
 import os
 import urllib.request
-import urllib
 from thehive4py.api import TheHiveApi
 from thehive4py.models import Alert
 
