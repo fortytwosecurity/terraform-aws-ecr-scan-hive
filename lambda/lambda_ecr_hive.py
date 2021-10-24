@@ -8,7 +8,7 @@ from thehive4py.models import Alert, AlertArtifact, CustomFieldHelper
 
 def hive_rest_call(alert, url, apikey):
 
-    api = TheHiveApi(hiveurl, apikey)
+    api = TheHiveApi(url, apikey)
     
     # Create the alert
     try:
@@ -26,19 +26,19 @@ def hive_rest_call(alert, url, apikey):
 
 
 def hive_build_data(accountId, repoName, region, severity,
-                    severityHive, reference):
+                    severityHive, reference, tag_environment, tag_project, tag_company):
 
     description = "A vulnerability has been found in the repo " \
         + repoName + " with rating " + severity + " in account " \
         + accountId + " in region " + region \
-        + ". Please remediate the issue."
+        + ". Please remediate the issue. [Scan Results](https://" + region + ".console.aws.amazon.com/ecr/repositories/private/" + accountId + "/" + repoName + "/image/" + imageDigest + "/scan-results/?region=" + region + ")"
 
     title = severity + " ECR Finding " + repoName
     source = repoName + ":" + region + ":" + accountId
 
     alert = Alert(title=title,
         tlp=3,
-        tags=[repoName, accountId, region, severity],
+        tags=[repoName, accountId, region, severity, tag_environment, tag_project, tag_company],
         description=description,
         type='external',
         source=source,
@@ -46,7 +46,7 @@ def hive_build_data(accountId, repoName, region, severity,
 
     )
 
-    print("Hive alert: ", json.dumps(alert))
+    print("Hive alert: ", alert)
 
     return alert
 
@@ -111,10 +111,13 @@ def lambda_handler(event, context):
 
     if createHiveAlert:
         hiveSecretArn = os.environ['hiveSecretArn']
+        tag_company = os.environ['company']
+        tag_project = os.environ['project']
+        tag_environment = os.environ['environment']
         hiveSecretData = get_hive_secret(boto3, hiveSecretArn)
         hiveUrl = hiveSecretData['url']
         hiveApiKey = hiveSecretData['apikey']
         json_data = hive_build_data(accountId, repoName, awsRegion, severity,
-                                    severityHive, reference)
+                                    severityHive, reference, tag_environment, tag_project, tag_company)
         json_response = hive_rest_call(json_data, hiveUrl, hiveApiKey)
         print("Created Hive alert ", json_response)
