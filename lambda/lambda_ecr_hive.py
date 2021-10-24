@@ -46,7 +46,7 @@ def hive_build_data(accountId, repoName, region, severity,
                   type='external',
                   source=source,
                   sourceRef=reference,
-                )
+                  )
 
     print("Hive alert: ", alert)
 
