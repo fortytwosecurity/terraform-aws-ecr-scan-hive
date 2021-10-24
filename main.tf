@@ -139,7 +139,7 @@ module "ecr_to_hive_lambda" {
   layers = [
     module.thehive4py_layer.lambda_layer_arn,
   ]
-  
+
   attach_policies    = true
   policies           = [module.hive_ecr_iam_policy.arn]
   number_of_policies = 1
