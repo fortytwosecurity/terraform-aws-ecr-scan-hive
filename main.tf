@@ -1,7 +1,10 @@
 
 
 resource "random_string" "hive_api_key" {
-  length = 4
+  length  = 4
+  lower   = true
+  special = false
+  upper   = false
 }
 
 module "hive_api_key" {
