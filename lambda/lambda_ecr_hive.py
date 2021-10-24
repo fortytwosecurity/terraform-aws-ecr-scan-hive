@@ -4,25 +4,27 @@ import os
 import urllib.request
 import urllib
 from thehive4py.api import TheHiveApi
-from thehive4py.models import Alert, AlertArtifact
+from thehive4py.models import Alert, AlertArtifact, CustomFieldHelper
+
+
 
 def hive_rest_call(data, url, apikey):
 
-    hiveurl = url + "/api/alert"
+    api = TheHiveApi(hiveurl, apikey)
+    
+    # Create the alert
+    try:
+      response = api.create_alert(alert)
 
-    # Build the request
-    restreq = urllib.request.Request(hiveurl)
-    restreq.add_header('Content-Type', 'application/json')
-    restreq.add_header('Authorization', 'Bearer %s' % apikey)
+      # Print the JSON response 
+      print(json.dumps(response.json(), indent=4, sort_keys=True))
 
-    # Send the request and grab JSON response
-    response = urllib.request.urlopen(restreq, data.encode('utf-8'))
+    except AlertException as e:
+      print("Alert create error: {}".format(e))
 
-    resp = response.read()
-    print("Hive response: ", json.dumps(resp.decode('utf-8')))
-
+  
     # Load into a JSON object and return that to the calling function
-    return json.loads(resp.decode('utf-8'))
+    return json.loads(response.decode('utf-8'))
 
 
 def hive_build_data(accountId, repoName, region, severity,
@@ -34,14 +36,19 @@ def hive_build_data(accountId, repoName, region, severity,
         + ". Please remediate the issue."
 
     title = severity + " ECR Finding " + repoName
-    source = repoName + ":" + region + ":" + accountId + "2"
-    alert = {
-        "title": title,
-        "description": description,
-        "type": "external",
-        "source": source,
-        "sourceRef": reference
-    }
+    source = repoName + ":" + region + ":" + accountId
+
+    alert = Alert(title='New Alert',
+        tlp=3,
+        title=title,
+        tags=[repoName, accountId, region, severity],
+        description=description,
+        type='external',
+        source=source,
+        sourceRef=reference,
+
+    )
+
     print("Hive alert: ", json.dumps(alert))
 
     return json.dumps(alert)
