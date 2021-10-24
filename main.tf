@@ -12,7 +12,7 @@ module "hive_api_key" {
 
 module "hive_ecr_cloudwatch_event" {
   source = "git::https://github.com/cloudposse/terraform-aws-cloudwatch-events.git?ref=master"
-  name   = "hive_ecr_cloudwatch-${random_string.server.id}"
+  name   = "hive_ecr_cloudwatch-${random_string.hive_api_key.id}"
 
   cloudwatch_event_rule_description = var.cloudwatch_event_rule_description
   cloudwatch_event_rule_pattern     = var.cloudwatch_event_rule_pattern
