@@ -1,6 +1,7 @@
 # Terraform Aws Ecr Scan Hive
 
-Add secret separately. 
+Add secret separately.
+
 ```
 resource "aws_kms_key" "hive_api_key_kms" {
   description         = "Key for secret hive_api_key"
@@ -18,6 +19,7 @@ resource "aws_secretsmanager_secret" "hive_api_key" {
   name        = "root/hive/api-key"
 }
 ```
+
 secret value:
 
 ```
