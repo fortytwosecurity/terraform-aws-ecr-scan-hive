@@ -22,6 +22,11 @@ def hive_rest_call(alert, url, apikey):
     # Load into a JSON object and return that to the calling function
     return json.dumps(response.json())
 
+def create_issue_for_finding(severity,filter_list):
+    if severity.upper() in (item.upper() for item in filter_list):
+        return True
+    else:
+        return False
 
 def hive_build_data(accountId, repoName, region, severity,
                     severityHive, reference, tag_environment,
@@ -74,7 +79,8 @@ def lambda_handler(event, context):
     awsRegion = context.invoked_function_arn.split(":")[3]
     # createHiveAlert = os.environ['createHiveAlert']
     createHiveAlert = True
-
+    issue_severity_filter = json.loads(os.environ['issue_severity_filter'])
+    
     print("ECR alert: ", event)
 
     # Get ECR event details
@@ -113,7 +119,7 @@ def lambda_handler(event, context):
         severity = "CRITICAL"
         severityHive = 3
 
-    if createHiveAlert:
+    if createHiveAlert and create_issue_for_finding(severity,issue_severity_filter):
         hiveSecretArn = os.environ['hiveSecretArn']
         tag_company = os.environ['company']
         tag_project = os.environ['project']
@@ -127,3 +133,5 @@ def lambda_handler(event, context):
                                     imageTag)
         json_response = hive_rest_call(json_data, hiveUrl, hiveApiKey)
         print("Created Hive alert ", json_response)
+    else:
+        print("No issue created, issue creation disabled, or severity not in filterlist.")

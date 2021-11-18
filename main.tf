@@ -1,16 +1,8 @@
-
-
 resource "random_string" "hive_api_key" {
   length  = 4
   lower   = true
   special = false
   upper   = false
-}
-
-module "hive_api_key" {
-  source  = "QuiNovas/standard-secret/aws"
-  version = "3.0.2"
-  name    = "test/hive/api-key-${random_string.hive_api_key.id}"
 }
 
 module "hive_ecr_cloudwatch_event" {
@@ -30,8 +22,7 @@ module "hive_ecr_iam_assumable_role" {
     "lambda.amazonaws.com"
   ]
 
-  create_role = true
-
+  create_role       = true
   role_name         = "ECRToHiveFindingsLambdaRole-${random_string.hive_api_key.id}"
   role_requires_mfa = false
 
@@ -73,14 +64,14 @@ module "hive_ecr_iam_policy" {
         "secretsmanager:GetSecretValue"
       ],
       "Effect": "Allow",
-      "Resource": "${module.hive_api_key.arn}"
+      "Resource": "${var.hive_api_secret_arn}"
     },
         { 
       "Action": [
         "kms:Decrypt"
       ],
       "Effect": "Allow",
-      "Resource": "${module.hive_api_key.kms_key_arn}"
+      "Resource": "${var.hive_api_secret_kms_key_arn}"
     }       
   ]
 }
@@ -105,35 +96,31 @@ module "thehive4py_layer" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "2.7.0"
 
-  create_layer = true
-
-  layer_name          = "thehive4py-layer-local"
-  description         = "Lambda layer containing thehive4py"
-  compatible_runtimes = ["python3.8"]
-
+  create_layer           = true
+  description            = "Lambda layer containing thehive4py"
+  layer_name             = "thehive4py-layer-local"
+  compatible_runtimes    = ["python3.8"]
   create_package         = false
   local_existing_package = "${path.module}/layer.zip"
-
-  #ignore_source_code_hash = true
 }
 
 module "ecr_to_hive_lambda" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "2.7.0"
 
-  function_name  = "ecrscan-to-hive"
-  description    = "function to send ecr scan finding to the hive"
-  handler        = "lambda_ecr_hive.lambda_handler"
-  runtime        = "python3.8"
-  create_package = false
-
+  function_name          = "ecrscan-to-hive"
+  description            = "function to send ecr scan finding to the hive"
+  handler                = "lambda_ecr_hive.lambda_handler"
+  runtime                = "python3.8"
+  create_package         = false
   local_existing_package = "lambda_ecr_hive.zip"
 
   environment_variables = {
-    hiveSecretArn = module.hive_api_key.arn
-    environment   = var.environment
-    company       = var.company
-    project       = var.project
+    hiveSecretArn         = var.hive_api_secret_arn
+    issue_severity_filter = jsonencode(var.issue_severity_filter)
+    environment           = var.environment
+    company               = var.company
+    project               = var.project
   }
 
   layers = [
