@@ -121,7 +121,7 @@ def lambda_handler(event, context):
         severity = "CRITICAL"
         severityHive = 3
 
-    if createHiveAlert and create_issue_for_finding(severity, 
+    if createHiveAlert and create_issue_for_finding(severity,
                                                     issue_severity_filter):
         hiveSecretArn = os.environ['hiveSecretArn']
         tag_company = os.environ['company']
@@ -137,5 +137,5 @@ def lambda_handler(event, context):
         json_response = hive_rest_call(json_data, hiveUrl, hiveApiKey)
         print("Created Hive alert ", json_response)
     else:
-        print("No issue created, issue creation disabled, or severity not " \
+        print("No issue created, issue creation disabled, or severity not " 
               "in filterlist.")
