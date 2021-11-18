@@ -137,5 +137,5 @@ def lambda_handler(event, context):
         json_response = hive_rest_call(json_data, hiveUrl, hiveApiKey)
         print("Created Hive alert ", json_response)
     else:
-        print("No issue created, issue creation disabled, or severity not " 
+        print("No issue created, issue creation disabled, or severity not "
               "in filterlist.")
