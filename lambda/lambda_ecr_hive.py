@@ -48,7 +48,7 @@ def hive_build_data(accountId, repoName, region, severity,
     alert = Alert(title=title,
                   tlp=3,
                   tags=[repoName, accountId, region, severity,
-                        tag_environment, tag_project, tag_company],  # noqa: E127,E501
+                        tag_environment, tag_project, tag_company, "ecr-scan"],  # noqa: E127,E501
                   description=description,
                   type='external',
                   source=source,
