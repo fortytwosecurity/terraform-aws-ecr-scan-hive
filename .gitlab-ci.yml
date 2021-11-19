@@ -1,0 +1,53 @@
+# This file is a template, and might need editing before it works on your project.
+# Official image for Hashicorp's Terraform. It uses light image which is Alpine
+# based as it is much lighter.
+#
+# Entrypoint is also needed as image by default set `terraform` binary as an
+# entrypoint.
+
+
+variables:
+  TF_DIRS: "terraform-logs terraform-mgmt terraform-test terraform-prodpci" 
+
+cache:
+  paths:
+    - .terraform
+
+stages:
+  - validate
+
+markdown validate:
+  stage: validate
+  image: 
+    name: ruby
+    entrypoint: [""]
+  script:
+    - gem install mdl -v 0.11.0
+    - mdl $CI_PROJECT_DIR/README.md
+
+terraform validate:
+  stage: validate
+  image:
+    name: hashicorp/terraform:1.0.7
+    entrypoint:
+      - '/usr/bin/env'
+      - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+  script:
+    - terraform -version
+    - terraform fmt -check -recursive
+
+gitleaks validate:
+  stage: validate
+  image:
+    name: zricethezav/gitleaks:v7.2.0
+    entrypoint: [""]
+  script: 
+    - gitleaks --path=$CI_PROJECT_DIR/
+
+python validate:
+  stage: validate
+  image: 
+    name: alpine/flake8:3.9.2
+    entrypoint: [""]
+  script:
+    -  flake8 $CI_PROJECT_DIR
